@@ -8,14 +8,16 @@ class AsyncFileObj(object):
     MODE_BINARY = 1
     MODE_TEXT = 2
 
-    def __init__(self, afd, mode, compressor, decompressor, ignore_header=False, buffer_size=1024 * 1024):
+    def __init__(
+        self, afd, mode, compressor, decompressor, ignore_header=False, buffer_size=1024 * 1024
+    ):
         self._afd = afd
         self._mode = mode
         self._compressor = compressor
         self._decompressor = decompressor
         self._ignore_header = ignore_header
         self._header = None
-        self._buffer = b''
+        self._buffer = b""
         self._buffer_size = buffer_size
         self._eof = False
         self._lines = []
@@ -24,16 +26,16 @@ class AsyncFileObj(object):
         self._has_flushed = True
         self._is_closed = False
 
-        if 'b' in mode:
+        if "b" in mode:
             self._file_type = self.MODE_BINARY
 
-        if 'w' in mode:
+        if "w" in mode:
             self.write = self._write
         else:
             self.write = self._cannot_write
 
     async def _cannot_write(self, buffer: bytes):
-        raise IOError('Cannot write because mode is not set to write')
+        raise IOError("Cannot write because mode is not set to write")
 
     async def read(self, n: Optional[int] = None):
         buffer_size = n if n else 1024 * 1024
@@ -47,7 +49,7 @@ class AsyncFileObj(object):
             if data:
                 self._buffer += self._decompressor.decompress(data)
             else:
-                if hasattr(self._decompressor, 'flush'):
+                if hasattr(self._decompressor, "flush"):
                     data = self._decompressor.flush()
                     if data:
                         self._buffer += data
@@ -111,7 +113,7 @@ class AsyncFileObj(object):
 
     async def flush(self):
         if self._has_flushed:
-            return b''
+            return b""
 
         self._has_flushed = True
         compressed_data = self._compressor.flush()
@@ -124,15 +126,15 @@ class AsyncFileObj(object):
             return
 
         await self.flush()
-        if hasattr(self._decompressor, 'close'):
+        if hasattr(self._decompressor, "close"):
             self._decompressor.close()
 
-        if hasattr(self._compressor, 'close'):
+        if hasattr(self._compressor, "close"):
             buf = self._compressor.close()
             if buf:
                 self._afd.write(buf)
 
-        if hasattr(self._afd, 'flush'):
+        if hasattr(self._afd, "flush"):
             await self._afd.flush()
         # If we pass a filename, then we close the file otherwise it's the
         # responsibility of the caller
@@ -146,7 +148,7 @@ class AsyncFileObj(object):
             try:
                 from aiofiles.threadpool import _open
             except ImportError:
-                error_import_usage('aiofiles')
+                error_import_usage("aiofiles")
 
             fd = await _open(self._afd, self._mode)
             self._filename = self._afd

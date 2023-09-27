@@ -4,7 +4,15 @@ from asyncstream import AsyncFileObj
 
 
 class AsyncWriter(object):
-    def __init__(self, afd: AsyncFileObj, columns=Optional[Iterable[str]], column_types=Optional[Iterable[str]], has_header=False, sep=b',', eol=b'\n'):
+    def __init__(
+        self,
+        afd: AsyncFileObj,
+        columns=Optional[Iterable[str]],
+        column_types=Optional[Iterable[str]],
+        has_header=False,
+        sep=b",",
+        eol=b"\n",
+    ):
         self._afd = afd
         self._sep = sep
         self._eol = eol

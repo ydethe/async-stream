@@ -1,0 +1,109 @@
+[build-system]
+requires = ["pdm-backend>=2.0.6"]
+build-backend = "pdm.backend"
+
+[project]
+name = "asyncstream"
+description = "Async s3 stream"
+authors = [
+    {name = "Francois Dang Ngoc", email = "francois.dangngoc@gmail.com"},
+    {name = "Frederic Dang Ngoc", email = "frederic.dangngoc@gmail.com"}
+]
+dependencies = [
+    'aiofiles',
+    'pandas',
+    'editables',
+    'python-snappy',
+    'uvloop',
+    'zstandard',
+]
+keywords = ['async','stream','compression','gzip','bzip2','zstd']
+classifiers=[
+    'License :: OSI Approved :: Apache Software License',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3'
+]
+requires-python = ">=3.8,<3.12"
+version="1.0.0"
+
+[project.urls]
+Source = "http://github.com/chimpler/async-stream/"
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.black]
+line-length = 100
+target-version = ['py38']
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+    "--html=htmldoc/tests/report.html",
+    "--self-contained-html",
+    "--junitxml=htmldoc/junit.xml",
+    "--cov=asyncstream",
+    "--doctest-modules",
+]
+testpaths = [
+    "tests/",
+]
+
+[tool.pdm.build]
+includes = [
+    "asyncstream/",
+]
+excludes = [
+    "tests",
+    "examples",
+    "build",
+    "dev",
+    "dist",
+    "mockup",
+    "ksy"
+]
+editable-backend = "editables"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "ipython~=7.23.1",
+    "docstr-coverage>=2.2.0",
+    "coverage-badge>=1.1.0",
+    "pre-commit>=3.2.2",
+]
+maintain = [
+    "black==22.3.0",
+    "blacken-docs==1.12.1",
+    "git-changelog>=1.0",
+]
+quality = [
+    "mypy>=1.2.0",
+    "ruff>=0.0.246",
+]
+doc = [
+    "pdoc3~=0.10.0",
+    "pylint~=2.15.3",
+]
+test = [
+    "pytest~=7.1.3",
+    "pytest-cov~=3.0.0",
+    "pytest-mock~=3.8.2",
+    "pytest-instafail~=0.4.2",
+    "pytest-picked~=0.4.6",
+    "pytest-sugar~=0.9.5",
+    "pytest-html~=3.1.1",
+]
+
+[tool.pdm.scripts]
+site_packages = true
+doc.shell = """\
+    mkdir -p htmldoc/asyncstream
+    pdoc --html --force --config latex_math=True -o htmldoc asyncstream
+    coverage html -d htmldoc/coverage --rcfile tests/coverage.conf
+    docstr-coverage asyncstream -miP -sp -is -idel --skip-file-doc --exclude ".*/kt.*.py" --badge=htmldoc/asyncstream/doc_badge.svg
+    coverage-badge -f -o htmldoc/asyncstream/cov_badge.svg
+"""

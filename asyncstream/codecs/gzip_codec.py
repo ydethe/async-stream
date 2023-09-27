@@ -20,6 +20,4 @@ def get_gzip_encoder(compress_level: int = -1):
 
 
 def get_gzip_decoder():
-    return zlib.decompressobj(
-        16 + zlib.MAX_WBITS  # see above
-    )
+    return zlib.decompressobj(16 + zlib.MAX_WBITS)  # see above
